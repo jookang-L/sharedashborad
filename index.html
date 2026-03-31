@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080">
+  <title>교사용 바탕화면 대시보드</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;700&family=Gothic+A1:wght@300;400;500;600;700&family=Do+Hyeon&family=Pretendard:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@400;500;600;700&family=Gowun+Batang&family=Gowun+Dodum&family=Black+Han+Sans&family=Jua&family=Sunflower:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="background-overlay"></div>
+
+  <div class="dashboard-wrapper">
+    <!-- 상단 영역: 달력 스트립 + D-Day 카드 -->
+    <div class="calendar-area">
+      <div class="calendar-strip" id="calendar-strip">
+        <button class="cal-strip-nav cal-strip-prev" id="cal-strip-prev">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="cal-strip-scroll" id="cal-strip-scroll">
+          <div class="cal-strip-track" id="cal-strip-track"></div>
+        </div>
+        <button class="cal-strip-nav cal-strip-next" id="cal-strip-next">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+      <div class="dday-cards-area" id="dday-cards-area"></div>
+    </div>
+
+    <!-- 날짜 호버 툴팁 -->
+    <div class="day-tooltip" id="day-tooltip" style="display:none;">
+      <button class="day-tooltip-btn" id="day-tooltip-dday">
+        <i class="fas fa-calendar-check"></i> D-Day
+      </button>
+      <button class="day-tooltip-btn" id="day-tooltip-memo">
+        <i class="fas fa-sticky-note"></i> 메모
+      </button>
+    </div>
+
+    <div class="dashboard-container">
+      <!-- Section 1 - Left (25%) -->
+      <section class="column column-left" data-column="left">
+        <div class="card card-timetable" data-card-id="timetable" draggable="true">
+          <div class="card-header">
+            <i class="fas fa-clock"></i>
+            <h2>오늘의 시간표</h2>
+            <span class="badge" id="today-day"></span>
+          </div>
+          <div class="card-body">
+            <div class="timetable-day-tabs" id="timetable-day-tabs" role="tablist" aria-label="요일별 시간표">
+              <button type="button" class="timetable-day-tab" data-day="1" role="tab">월</button>
+              <button type="button" class="timetable-day-tab" data-day="2" role="tab">화</button>
+              <button type="button" class="timetable-day-tab" data-day="3" role="tab">수</button>
+              <button type="button" class="timetable-day-tab" data-day="4" role="tab">목</button>
+              <button type="button" class="timetable-day-tab" data-day="5" role="tab">금</button>
+            </div>
+            <ul class="timetable-list" id="timetable-list">
+              <li class="timetable-item skeleton"><span class="period">1</span><span class="subject">불러오는 중...</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card card-lunch" data-card-id="lunch" draggable="true">
+          <div class="card-header">
+            <i class="fas fa-utensils"></i>
+            <h2>오늘의 급식</h2>
+          </div>
+          <div class="card-body">
+            <div class="school-search" id="school-search">
+              <input type="text" id="school-name-input" placeholder="학교 이름 검색..." spellcheck="false">
+              <button id="school-search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="meal-type-tabs" id="meal-type-tabs" role="tablist" aria-label="급식 구분">
+              <button type="button" class="meal-type-tab" data-meal="조식" role="tab">조식</button>
+              <button type="button" class="meal-type-tab active" data-meal="중식" role="tab" aria-selected="true">중식</button>
+              <button type="button" class="meal-type-tab" data-meal="석식" role="tab">석식</button>
+            </div>
+            <div class="school-current" id="school-current"></div>
+            <ul class="lunch-list" id="lunch-list">
+              <li class="lunch-item skeleton">불러오는 중...</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2 - Center (50%) -->
+      <section class="column column-center" data-column="center">
+        <div class="clock-widget">
+          <div class="clock-time" id="clock-time">00:00</div>
+          <div class="clock-date" id="clock-date">0000년 00월 00일</div>
+        </div>
+
+        <div class="center-cards">
+          <div class="card card-todo" data-card-id="todo" draggable="true">
+            <div class="card-header">
+              <i class="fas fa-check-circle"></i>
+              <h2>TO DO LIST</h2>
+              <button class="btn-add" id="btn-add-todo" title="할 일 추가">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              <ul class="todo-list" id="todo-list">
+                <li class="todo-item skeleton">불러오는 중...</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card card-memo" data-card-id="memo" draggable="true">
+            <div class="card-header">
+              <i class="fas fa-sticky-note"></i>
+              <h2>MEMO</h2>
+            </div>
+            <div class="card-body">
+              <textarea class="memo-textarea" id="memo-textarea" placeholder="메모를 입력하세요..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dock Zone -->
+        <div class="dock-zone">
+          <div class="dock-settings-row">
+            <div class="settings-wrapper" id="settings-wrapper">
+              <button class="settings-btn" id="settings-btn" title="화면 설정">
+                <i class="fas fa-cog"></i>
+              </button>
+              <div class="settings-panel" id="settings-panel">
+              <h3 class="settings-title">대시보드 설정</h3>
+              <div class="settings-group">
+                <label>배경 색상</label>
+                <div class="settings-color-row">
+                  <input type="color" id="setting-bg-color" value="#1e293b">
+                  <span class="settings-color-label" id="setting-bg-label">#1e293b</span>
+                  <input type="range" id="setting-bg-opacity" min="0" max="100" value="0" class="settings-range">
+                  <span class="settings-range-label" id="setting-bg-opacity-label">0%</span>
+                </div>
+              </div>
+              <div class="settings-group">
+                <label>카드 색상</label>
+                <div class="settings-color-row">
+                  <input type="color" id="setting-card-color" value="#ffffff">
+                  <span class="settings-color-label" id="setting-card-label">#ffffff</span>
+                  <input type="range" id="setting-card-opacity" min="20" max="100" value="72" class="settings-range">
+                  <span class="settings-range-label" id="setting-card-opacity-label">72%</span>
+                </div>
+              </div>
+              <div class="settings-group">
+                <label>폰트</label>
+                <select id="setting-font" class="settings-select">
+                  <option value="'Noto Sans KR', sans-serif">Noto Sans KR</option>
+                  <option value="'Pretendard', sans-serif">Pretendard</option>
+                  <option value="'IBM Plex Sans KR', sans-serif">IBM Plex Sans KR</option>
+                  <option value="'Nanum Gothic', sans-serif">나눔고딕</option>
+                  <option value="'Nanum Myeongjo', serif">나눔명조</option>
+                  <option value="'Gothic A1', sans-serif">Gothic A1</option>
+                  <option value="'Do Hyeon', sans-serif">도현</option>
+                  <option value="'Noto Serif KR', serif">Noto Serif KR</option>
+                  <option value="'Gowun Batang', serif">고운바탕</option>
+                  <option value="'Gowun Dodum', serif">고운돋움</option>
+                  <option value="'Black Han Sans', sans-serif">Black Han Sans</option>
+                  <option value="'Jua', sans-serif">주아</option>
+                  <option value="'Sunflower', sans-serif">Sunflower</option>
+                </select>
+              </div>
+              <div class="settings-group">
+                <label>폰트 색상</label>
+                <div class="settings-color-row">
+                  <input type="color" id="setting-font-color" value="#1a1a1a">
+                  <span class="settings-color-label" id="setting-font-label">#1a1a1a</span>
+                </div>
+              </div>
+              <div class="settings-group">
+                <label>강조 색 (아이콘·버튼·탭)</label>
+                <div class="settings-color-row">
+                  <input type="color" id="setting-accent-color" value="#4a7cff">
+                  <span class="settings-color-label" id="setting-accent-label">#4a7cff</span>
+                </div>
+              </div>
+              <div class="settings-group">
+                <label>카드 추가·복구</label>
+                <p class="settings-subhint">카드 제목 줄 오른쪽 <strong>×</strong>로 숨기기(기본 카드) 또는 삭제(추가 메모 카드)할 수 있습니다.</p>
+                <button type="button" class="settings-card-add" id="settings-add-memo-card">+ 자유 메모 카드 추가</button>
+                <div id="card-hidden-restore" class="card-hidden-restore"></div>
+              </div>
+              <div class="settings-actions">
+                <button class="settings-reset" id="settings-reset">초기화</button>
+              </div>
+              </div>
+            </div>
+            <div class="api-settings-wrapper" id="api-settings-wrapper">
+              <button class="api-settings-btn" id="api-settings-btn" title="연동 설정 (API·시트)">
+                <i class="fas fa-cog"></i>
+              </button>
+              <div class="api-settings-panel" id="api-settings-panel">
+                <h3 class="settings-title">연동 설정</h3>
+                <p class="api-settings-hint">Google Sheets API 키, 스프레드시트, Apps Script, 나이스(NEIS) 키를 입력한 뒤 저장하세요.</p>
+                <div class="settings-group">
+                  <label for="api-input-google-key">Google Sheets API 키</label>
+                  <input type="password" class="api-settings-input" id="api-input-google-key" placeholder="AIza..." autocomplete="off" spellcheck="false">
+                </div>
+                <div class="settings-group">
+                  <label for="api-input-sheet">구글 스프레드시트 (URL 또는 ID)</label>
+                  <input type="text" class="api-settings-input" id="api-input-sheet" placeholder="https://docs.google.com/spreadsheets/d/..." spellcheck="false">
+                </div>
+                <div class="settings-group">
+                  <label for="api-input-apps-script">Apps Script 웹 앱 URL</label>
+                  <input type="text" class="api-settings-input" id="api-input-apps-script" placeholder="https://script.google.com/macros/s/.../exec" spellcheck="false">
+                </div>
+                <div class="settings-group">
+                  <label for="api-input-neis-key">나이스(NEIS) API 키</label>
+                  <input type="password" class="api-settings-input" id="api-input-neis-key" placeholder="급식·학교 검색용" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="api-settings-actions">
+                  <button type="button" class="api-settings-save" id="api-settings-save">저장 후 적용</button>
+                  <button type="button" class="api-settings-reset" id="api-settings-reset">연동 초기화</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3 - Right (25%) -->
+      <section class="column column-right" data-column="right">
+        <!-- 작업 중 폴더 (내부 투명 - 바탕화면 폴더 위치) -->
+        <div class="card card-folders card-see-through" data-card-id="folders" draggable="true">
+          <div class="card-header">
+            <i class="fas fa-folder-open"></i>
+            <h2>작업 중 폴더</h2>
+          </div>
+          <div class="card-body"></div>
+        </div>
+
+        <div class="card card-links" data-card-id="links" draggable="true" title="링크 영역 또는 제목을 더블클릭하여 편집">
+          <div class="card-header">
+            <i class="fas fa-link"></i>
+            <h2>즐겨찾기 링크</h2>
+            <span class="card-header-hint">더블클릭하여 편집</span>
+          </div>
+          <div class="card-body">
+            <div class="link-grid" id="link-grid">
+              <a class="link-item skeleton" href="#">불러오는 중...</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- 즐겨찾기 링크 편집 모달 -->
+  <div class="link-editor-overlay" id="link-editor-overlay" style="display:none;">
+    <div class="link-editor-modal" role="dialog" aria-labelledby="link-editor-title">
+      <div class="link-editor-header">
+        <h3 id="link-editor-title">즐겨찾기 링크 편집</h3>
+        <button type="button" class="link-editor-close" id="link-editor-close" title="닫기"><i class="fas fa-times"></i></button>
+      </div>
+      <p class="link-editor-intro">이름과 주소를 입력하세요. 한 번 클릭은 새 탭으로 이동, 더블클릭은 이 창이 열립니다.</p>
+      <div class="link-editor-body" id="link-editor-body"></div>
+      <div class="link-editor-footer">
+        <button type="button" class="link-editor-btn link-editor-btn-secondary" id="link-editor-add-row"><i class="fas fa-plus"></i> 링크 추가</button>
+        <button type="button" class="link-editor-btn link-editor-btn-secondary" id="link-editor-sheet">시트에서 불러오기</button>
+        <div class="link-editor-footer-spacer"></div>
+        <button type="button" class="link-editor-btn link-editor-btn-ghost" id="link-editor-cancel">취소</button>
+        <button type="button" class="link-editor-btn link-editor-btn-primary" id="link-editor-save">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- D-Day 추가 모달 -->
+  <div class="dday-modal-overlay" id="dday-modal-overlay" style="display:none;">
+    <div class="dday-modal">
+      <div class="dday-modal-header">
+        <h3 id="dday-modal-title">D-Day 추가</h3>
+        <button class="dday-modal-close" id="dday-modal-close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="dday-modal-body">
+        <label id="dday-label-name">이벤트 이름</label>
+        <input type="text" id="dday-input-name" placeholder="예: 기말고사" maxlength="30">
+        <label>날짜 선택</label>
+        <input type="date" id="dday-input-date">
+      </div>
+      <div class="dday-modal-footer">
+        <button class="dday-modal-cancel" id="dday-modal-cancel">취소</button>
+        <button class="dday-modal-submit" id="dday-modal-submit">추가</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS 로딩 순서: API → 컴포넌트 → 메인 -->
+  <script src="js/google-api.js"></script>
+  <script src="js/components/timetable.js"></script>
+  <script src="js/components/meals.js"></script>
+  <script src="js/components/todo.js"></script>
+  <script src="js/components/links.js"></script>
+  <script src="js/components/settings.js"></script>
+  <script src="js/components/api-settings.js"></script>
+  <script src="js/components/cards-layout.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
